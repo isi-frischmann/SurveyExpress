@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Survey Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+    
+
+    <script>
+
+        $(document).ready(function(){
+            var socket = io();
+
+            $('#posting_form').submit(function(){
+                var name = $('#name').val()
+                var language = $('#lang').val()
+                var location = $('#loc').val()
+                var comment = $('#com').val()
+                console.log(location); //Prints in the console
+                socket.emit('userData', {name:name, language:language, location:location, comment:comment});
+                return false; //to stop the action. Otherwise socket will always render the template again and don't post the data
+            });
+
+            socket.on('infoUser', function(data){
+                $('#results').append("<p>" + data.name + "</p>")
+                $('#results').append("<p>" + data.language + "</p>")
+                $('#results').append("<p>" + data.location + "</p>")
+                $('#results').append("<p>" + data.comment + "</p>")
+                $('#results').append("<p>" + data.randomNum + "</p>")
+                console.log(data); //Prints the information in the console
+
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+
+    <!-- for socket don't use the method and action -->
+        <form id="posting_form">
+
+            <p>Your Name</p>
+            <input type="text" name="name" id="name"></input>
+
+            <br>
+
+            <p>Favorite Language</p>
+            <select name="language" id="lang">
+                <option>Python</option>
+                <option>Java Script</option>
+                <option>Java</option>
+                <option>Ruby</option>
+            </select>
+
+            <br>
+
+            <p>Dojo Location</p>
+            <select name="location" id="loc">
+                <option>San Jose</option>
+                <option>San Francisco</option>
+                <option>Vienna</option>
+                <option>Munich</option>
+            </select>
+
+            <br>
+
+            <p>Comment</p>
+            <textarea name="comment" id="com"></textarea>
+
+            <br>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+
+        <div id="results"></div>
+    </body>
+</html>
